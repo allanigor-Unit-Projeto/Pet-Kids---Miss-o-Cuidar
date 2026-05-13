@@ -3,7 +3,7 @@
 ## Controle parental para menores de 13 anos (RN006, RNF-S003).
 extends Control
 
-# ──────────────────────────────────────────────
+
 # Referências UI
 @onready var tab_container: TabContainer     = $TabContainer
 @onready var btn_login_email: Button         = $TabContainer/Login/VBox/BtnLoginEmail
@@ -24,7 +24,7 @@ extends Control
 @onready var loading_overlay: CanvasLayer    = $LoadingOverlay
 @onready var toast_container: Control        = $ToastContainer
 
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	UIManager.register_loading_overlay(loading_overlay)
 	UIManager.register_toast_container(toast_container)
@@ -34,9 +34,9 @@ func _ready() -> void:
 	_setup_accessibility()
 	_check_existing_session()
 
-# ──────────────────────────────────────────────
+
 # Conexão sinais de botões
-# ──────────────────────────────────────────────
+
 func _connect_signals() -> void:
 	# Login
 	btn_login_email.pressed.connect(_on_login_email_pressed)
@@ -54,9 +54,9 @@ func _connect_signals() -> void:
 	AuthService.registration_success.connect(_on_registration_success)
 	AuthService.registration_failed.connect(_on_registration_failed)
 
-# ──────────────────────────────────────────────
+
 # Acessibilidade (RNF-U001, RNF-U004)
-# ──────────────────────────────────────────────
+
 func _setup_accessibility() -> void:
 	inp_email.placeholder_text    = "seu@email.com"
 	inp_password.placeholder_text = "Senha"
@@ -74,16 +74,16 @@ func _setup_accessibility() -> void:
 	btn_apple.tooltip_text       = "Entrar com Apple ID"
 	btn_register.tooltip_text    = "Criar nova conta"
 
-# ──────────────────────────────────────────────
+
 # Verifica sessão salva
-# ──────────────────────────────────────────────
+
 func _check_existing_session() -> void:
 	if AuthService.is_logged_in():
 		GameManager.go_to_main_menu()
 
-# ──────────────────────────────────────────────
+
 # Handlers de botões — Login
-# ──────────────────────────────────────────────
+
 func _on_login_email_pressed() -> void:
 	lbl_login_error.visible = false
 	var email    := inp_email.text.strip_edges()
@@ -112,9 +112,9 @@ func _on_apple_pressed() -> void:
 	await get_tree().create_timer(1.0).timeout
 	AuthService.login_oauth("apple", "simulated_apple_token")
 
-# ──────────────────────────────────────────────
+
 # Handlers de botões — Cadastro
-# ──────────────────────────────────────────────
+
 func _on_register_pressed() -> void:
 	lbl_reg_error.visible = false
 
@@ -152,9 +152,9 @@ func _on_birth_date_changed(text: String) -> void:
 		if age < 13:
 			UIManager.show_toast("Conta para menor: será necessário aprovação de responsável.")
 
-# ──────────────────────────────────────────────
+
 # Callbacks de AuthService
-# ──────────────────────────────────────────────
+
 func _on_login_success(_user: Dictionary) -> void:
 	UIManager.hide_loading()
 	btn_login_email.disabled = false
@@ -179,9 +179,9 @@ func _on_registration_failed(reason: String) -> void:
 	btn_register.disabled = false
 	_show_reg_error(reason)
 
-# ──────────────────────────────────────────────
+
 # Exibição de erros (RNF-U007 — linguagem não técnica)
-# ──────────────────────────────────────────────
+
 func _show_login_error(msg: String) -> void:
 	lbl_login_error.text    = msg
 	lbl_login_error.visible = true
@@ -190,9 +190,9 @@ func _show_reg_error(msg: String) -> void:
 	lbl_reg_error.text    = msg
 	lbl_reg_error.visible = true
 
-# ──────────────────────────────────────────────
+
 # Validações
-# ──────────────────────────────────────────────
+
 func _is_valid_email(email: String) -> bool:
 	return email.contains("@") and email.contains(".") and email.length() > 5
 
