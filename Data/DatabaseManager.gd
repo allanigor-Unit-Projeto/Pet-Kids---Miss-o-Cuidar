@@ -6,15 +6,15 @@
 ##           inventario_local, eventos_offline, conquistas_local
 extends Node
 
-# ──────────────────────────────────────────────
+
 # Constantes
-# ──────────────────────────────────────────────
+
 const DB_PATH := "user://pet_kids.db"
 const DB_VERSION := 2.2
 
-# ──────────────────────────────────────────────
+
 # Estado interno
-# ──────────────────────────────────────────────
+
 
 ## SQLite plugin godot-sqlite .
 ## Se o plugin não estiver presente, usa dicionário em memória como fallback.
@@ -30,9 +30,9 @@ var _memory_db: Dictionary = {
 	"configuracoes": []
 }
 
-# ──────────────────────────────────────────────
+
 # Inicialização
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	_initialize_database()
 
@@ -53,9 +53,9 @@ func _initialize_database() -> void:
 		push_warning("[DatabaseManager] Plugin SQLite não encontrado. Usando fallback em memória.")
 		_use_memory_fallback = true
 
-# ──────────────────────────────────────────────
+
 # DDL — Criação de tabelas (RNF-I009)
-# ──────────────────────────────────────────────
+
 func _create_tables() -> void:
 	var ddl_statements := [
 		"""CREATE TABLE IF NOT EXISTS usuario_local (
@@ -151,9 +151,9 @@ func _run_migrations() -> void:
 		_execute("INSERT OR REPLACE INTO db_version (version) VALUES (%d)" % DB_VERSION)
 		print("[DatabaseManager] Migração concluída para v%d" % DB_VERSION)
 
-# ──────────────────────────────────────────────
+
 # Helpers de execução SQL
-# ──────────────────────────────────────────────
+
 func _execute(sql: String, params: Array = []) -> bool:
 	if _use_memory_fallback:
 		return true  # Fallback não executa SQL real
@@ -166,9 +166,9 @@ func _query(sql: String, params: Array = []) -> Array:
 		return _db.query_result
 	return []
 
-# ──────────────────────────────────────────────
+
 # CRUD — Usuario Local
-# ──────────────────────────────────────────────
+
 func save_user(user: Dictionary) -> bool:
 	if _use_memory_fallback:
 		_upsert_memory("usuario_local", user, "id")
@@ -190,9 +190,9 @@ func get_user(user_id: String) -> Dictionary:
 	var rows := _query("SELECT * FROM usuario_local WHERE id = ?", [user_id])
 	return rows[0] if rows.size() > 0 else {}
 
-# ──────────────────────────────────────────────
+
 # CRUD — Pet Virtual Cache
-# ──────────────────────────────────────────────
+
 func save_pet_virtual(pet: Dictionary) -> bool:
 	if _use_memory_fallback:
 		_upsert_memory("pet_virtual_cache", pet, "id")
@@ -241,9 +241,9 @@ func clear_pet_virtual() -> void:
 		return
 	_execute("DELETE FROM pet_virtual_cache")
 
-# ──────────────────────────────────────────────
+
 # CRUD — Missões
-# ──────────────────────────────────────────────
+
 func save_mission(mission: Dictionary) -> bool:
 	if _use_memory_fallback:
 		_upsert_memory("missoes_pendentes", mission, "id")
@@ -277,9 +277,9 @@ func complete_mission(mission_id: String) -> void:
 		concluido_em = CURRENT_TIMESTAMP WHERE id = ?
 	""", [mission_id])
 
-# ──────────────────────────────────────────────
+
 # CRUD — Inventário
-# ──────────────────────────────────────────────
+
 func save_inventory_item(item: Dictionary) -> bool:
 	if _use_memory_fallback:
 		_upsert_memory("inventario_local", item, "id")
@@ -314,9 +314,9 @@ func consume_item(item_id: String, quantity: int = 1) -> bool:
 		[quantity, item_id])
 	return true
 
-# ──────────────────────────────────────────────
+
 # Eventos offline (RNF-P009)
-# ──────────────────────────────────────────────
+
 func queue_offline_event(tipo: String, payload: Dictionary) -> void:
 	var json_payload := JSON.stringify(payload)
 	if _use_memory_fallback:
@@ -342,9 +342,9 @@ func mark_events_synced(ids: Array) -> void:
 	for id in ids:
 		_execute("UPDATE eventos_offline SET sincronizado = 1 WHERE id = ?", [id])
 
-# ──────────────────────────────────────────────
+
 # Configurações (chave-valor)
-# ──────────────────────────────────────────────
+
 func set_config(key: String, value: String) -> void:
 	if _use_memory_fallback:
 		_upsert_memory("configuracoes", {"chave": key, "valor": value}, "chave")
@@ -358,9 +358,9 @@ func get_config(key: String, default_value: String = "") -> String:
 	var rows := _query("SELECT valor FROM configuracoes WHERE chave = ?", [key])
 	return rows[0].get("valor", default_value) if rows.size() > 0 else default_value
 
-# ──────────────────────────────────────────────
+
 # Conquistas
-# ──────────────────────────────────────────────
+
 func unlock_achievement(achievement: Dictionary) -> void:
 	if _use_memory_fallback:
 		_upsert_memory("conquistas_local", achievement, "id")
@@ -382,9 +382,9 @@ func get_unlocked_achievements() -> Array:
 		)
 	return _query("SELECT * FROM conquistas_local WHERE desbloqueado = 1")
 
-# ──────────────────────────────────────────────
+
 # Helpers de fallback em memória
-# ──────────────────────────────────────────────
+
 func _upsert_memory(table: String, record: Dictionary, pk: String) -> void:
 	var list: Array = _memory_db.get(table, [])
 	for i in list.size():
@@ -400,9 +400,9 @@ func _find_memory(table: String, key: String, value) -> Dictionary:
 			return row
 	return {}
 
-# ──────────────────────────────────────────────
+
 # Encerramento
-# ──────────────────────────────────────────────
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and _db != null and not _use_memory_fallback:
 		_db.close_db()
