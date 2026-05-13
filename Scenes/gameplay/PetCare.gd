@@ -3,7 +3,7 @@
 ## Interpreta gestos touch e aciona SistemaCuidados.
 extends Control
 
-# ──────────────────────────────────────────────
+
 @onready var pet_3d_viewport: SubViewport      = $PetViewport
 @onready var hud_needs: Control                = $HUD/NeedsPanel
 @onready var bar_hunger: ProgressBar           = $HUD/NeedsPanel/BarHunger
@@ -35,7 +35,7 @@ extends Control
 @onready var dialog_overlay: CanvasLayer       = $DialogOverlay
 @onready var level_up_overlay: CanvasLayer     = $LevelUpOverlay
 
-# ──────────────────────────────────────────────
+
 # Subsistemas de gameplay
 var _sistema_cuidados: SistemaCuidados
 var _sistema_progressao: SistemaProgressao
@@ -52,7 +52,7 @@ const CIRCLE_SEGMENTS := 6
 
 var _circle_points: Array[Vector2] = []
 
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	UIManager.register_toast_container(toast_container)
 	UIManager.register_dialog_overlay(dialog_overlay)
@@ -96,9 +96,9 @@ func _connect_signals() -> void:
 	btn_missions.pressed.connect(GameManager.go_to_missions)
 	btn_settings.pressed.connect(GameManager.go_to_settings)
 
-# ──────────────────────────────────────────────
+
 # Setup de botões com ícones e tooltips (RF-M001, RNF-U004)
-# ──────────────────────────────────────────────
+
 func _setup_buttons() -> void:
 	var care_buttons := {
 		btn_feed:  {"label": "Alimentar 🍖",  "tooltip": "Dê comida ao seu pet"},
@@ -113,9 +113,9 @@ func _setup_buttons() -> void:
 		btn.tooltip_text = care_buttons[btn]["tooltip"]
 		btn.custom_minimum_size = Vector2(80, 80)   # área de toque 48dp+ (RNF-U001)
 
-# ──────────────────────────────────────────────
+
 # Aplicar cuidado via botão
-# ──────────────────────────────────────────────
+
 func _apply_care(care_type: int) -> void:
 	var success := _sistema_cuidados.apply_care(care_type)
 	if success:
@@ -126,9 +126,9 @@ func _apply_care(care_type: int) -> void:
 		_sistema_eventos.try_trigger_random_event()
 		_animate_pet_reaction()
 
-# ──────────────────────────────────────────────
+
 # Gestos touch (RF-M001, RF-M006, RF-M007)
-# ──────────────────────────────────────────────
+
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		_handle_touch(event)
@@ -187,9 +187,9 @@ func _on_circle_gesture() -> void:
 	_apply_care(SistemaCuidados.CareType.PLAY)
 	UIManager.show_toast("Você jogou com %s! 🎾" % GameManager.current_pet_virtual.get("name", ""))
 
-# ──────────────────────────────────────────────
+
 # Atualização do HUD
-# ──────────────────────────────────────────────
+
 func _update_hud() -> void:
 	var pet := GameManager.current_pet_virtual
 	if pet.is_empty():
@@ -224,9 +224,9 @@ func _on_xp_changed(xp: int, level: int) -> void:
 	lbl_level.text = "Nv. %d" % level
 	bar_xp.value   = GameManager.get_xp_progress_percent() * 100.0
 
-# ──────────────────────────────────────────────
+
 # Emergência (RF007, RN004)
-# ──────────────────────────────────────────────
+
 func _on_emergency_triggered(event: Dictionary) -> void:
 	emergency_overlay.visible = true
 	var lbl_title := emergency_overlay.find_child("LblTitle", true, false) as Label
@@ -243,9 +243,9 @@ func _on_emergency_triggered(event: Dictionary) -> void:
 	AudioManager.play_sfx("emergency_alert")
 	UIManager._haptic_feedback(0.5)
 
-# ──────────────────────────────────────────────
+
 # Dica educativa (RF020)
-# ──────────────────────────────────────────────
+
 func _show_tip(tip: String) -> void:
 	tip_label.text   = "[i]💡 %s[/i]" % tip
 	tip_panel.visible = true
@@ -253,15 +253,15 @@ func _show_tip(tip: String) -> void:
 	tween.tween_interval(4.0)
 	tween.tween_callback(func(): tip_panel.visible = false)
 
-# ──────────────────────────────────────────────
+
 # Animação de reação do pet (placeholder — animar via AnimationPlayer 3D)
-# ──────────────────────────────────────────────
+
 func _animate_pet_reaction() -> void:
 	var ap := pet_3d_viewport.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if ap and ap.has_animation("happy"):
 		ap.play("happy")
 
-# ──────────────────────────────────────────────
+
 func _on_care_applied(_care_type: String, _effect: float, _needs: Dictionary) -> void:
 	SaveSystem.save_pet_virtual(GameManager.current_pet_virtual)
 
