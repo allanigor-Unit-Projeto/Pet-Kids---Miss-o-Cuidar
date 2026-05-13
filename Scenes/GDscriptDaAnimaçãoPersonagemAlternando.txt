@@ -1,0 +1,46 @@
+extends Node3D # Ou o tipo do seu nó raiz, por exemplo, CharacterBody3D
+
+@onready var animation_player = $AnimationPlayer # Certifique-se de que este é o caminho correto para o seu nó AnimationPlayer
+
+var animations_list = ["Agree_Gesture", "Casual_Walk", "Running", "Walking"]
+var current_animation_index = 0 # Começa com a primeira animação da lista
+
+func _ready():
+	if animation_player:
+		# Inicia a primeira animação
+		play_current_animation()
+	else:
+		print("Nó AnimationPlayer não encontrado!")
+
+func _input(event):
+	# Este é um exemplo de como você pode alternar as animações.
+	# Aqui, eu uso a tecla "espaço" para ir para a próxima animação.
+	# Você pode mudar isso para qualquer evento de sua escolha (e.g., botões da UI, movimento do personagem).
+	if event.is_action_pressed("ui_accept"): # 'ui_accept' é a tecla espaço por padrão
+		next_animation()
+
+func play_current_animation():
+	var animation_name = animations_list[current_animation_index]
+
+	if animation_player.has_animation(animation_name):
+		var animation = animation_player.get_animation(animation_name)
+		
+		# Define o modo de loop para a animação.
+		# A maioria das animações de movimento (Walk, Run) precisam de loop.
+		# Gestos (Agree_Gesture) talvez não. Você pode ajustar isso por animação se precisar.
+		if animation_name == "Agree_Gesture":
+			animation.loop_mode = Animation.LOOP_NONE # Não repete o gesto
+		else:
+			animation.loop_mode = Animation.LOOP_LINEAR # Repete animações de movimento
+
+		animation_player.play(animation_name)
+		print("Reproduzindo animação: ", animation_name)
+	else:
+		print("Animação '" + animation_name + "' não encontrada no AnimationPlayer!")
+
+func next_animation():
+	current_animation_index += 1
+	if current_animation_index >= animations_list.size():
+		current_animation_index = 0 # Volta para a primeira animação quando chega ao fim da lista
+	
+	play_current_animation()

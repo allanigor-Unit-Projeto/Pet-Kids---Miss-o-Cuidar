@@ -1,0 +1,21 @@
+extends Node3D # Ou o tipo do seu nó raiz, por exemplo, CharacterBody3D
+
+@onready var animation_player = $AnimationPlayer # Substitua pelo nome real do seu nó AnimationPlayer
+
+func _ready():
+	if animation_player:
+		var animation_name = "Casual_Walk"
+
+		# Verifica se a animação existe
+		if animation_player.has_animation(animation_name):
+			var animation = animation_player.get_animation(animation_name)
+			
+			# Define o modo de loop para a animação
+			animation.loop_mode = Animation.LOOP_LINEAR # Ou Animation.LOOP_PINGPONG para ir e voltar
+
+			# Reproduz a animação
+			animation_player.play(animation_name)
+		else:
+			print("Animação '" + animation_name + "' não encontrada no AnimationPlayer!")
+	else:
+		print("Nó AnimationPlayer não encontrado!")

@@ -1,0 +1,92 @@
+extends CharacterBody3D # Mudamos para CharacterBody3D para controle de movimento
+
+@onready var animation_player = $AnimationPlayer # Certifique-se de que este é o caminho correto
+@export var speed = 5.0 # Velocidade de movimento do personagem
+@export var rotation_speed = 3.0 # Velocidade de rotação do personagem (para suavizar a virada)
+
+var animations_list = ["Agree_Gesture", "Casual_Walk", "Running", "Walking"]
+var current_animation_index = 0 # Começa com a primeira animação da lista
+
+func _ready():
+	if animation_player:
+		play_current_animation()
+	else:
+		print("Nó AnimationPlayer não encontrado!")
+
+func _input(event):
+	# Este é um exemplo de como você pode alternar as animações.
+	# Aqui, eu uso a tecla "espaço" para ir para a próxima animação.
+	if event.is_action_pressed("ui_accept"): # 'ui_accept' é a tecla espaço por padrão
+		next_animation()
+
+func _physics_process(delta):
+	var input_direction = Vector3.ZERO
+	
+	# Detecta a entrada do teclado
+	if Input.is_action_pressed("ui_up"):
+		input_direction += -transform.basis.z # Movimenta para frente na direção que o personagem está olhando
+	if Input.is_action_pressed("ui_down"):
+		input_direction += transform.basis.z # Movimenta para trás
+	if Input.is_action_pressed("ui_left"):
+		input_direction += -transform.basis.x # Movimenta para a esquerda
+	if Input.is_action_pressed("ui_right"):
+		input_direction += transform.basis.x # Movimenta para a direita
+
+	if input_direction.length() > 0:
+		input_direction = input_direction.normalized() # Normaliza para evitar movimento mais rápido na diagonal
+		
+		# Define a velocidade baseada na entrada
+		velocity = input_direction * speed
+		
+		# Calcula a rotação suave para a direção do movimento
+		var target_rotation = atan2(-input_direction.x, -input_direction.z) # Calcula o ângulo em Y
+		var current_rotation = transform.basis.get_euler().y
+		
+		# Interpola a rotação atual para a rotação alvo
+		var rotated_y = lerp_angle(current_rotation, target_rotation, rotation_speed * delta)
+		rotation.y = rotated_y
+
+		# Lógica para alternar entre Walking e Running
+		if Input.is_action_pressed("ui_shift"): # Exemplo: Segurar Shift para correr
+			play_animation_if_different("Running")
+			velocity *= 1.5 # Aumenta a velocidade ao correr
+		else:
+			play_animation_if_different("Walking")
+	else:
+		# Se não há entrada, para o movimento e reproduz uma animação de ocioso ou padrão
+		velocity = Vector3.ZERO
+		# Você pode adicionar uma animação "Idle" aqui se tiver uma
+		# Por exemplo: play_animation_if_different("Idle")
+		# Por enquanto, vamos parar a animação ou manter a última se ela não for de movimento
+		if animation_player.current_animation != "Agree_Gesture": # Assume que Agree_Gesture não deve ser parado
+			animation_player.stop()
+
+
+	# Move o personagem usando o método move_and_slide do CharacterBody3D
+	move_and_slide()
+
+func play_current_animation():
+	var animation_name = animations_list[current_animation_index]
+	play_animation_if_different(animation_name) # Usa a nova função para evitar repetições
+
+func play_animation_if_different(animation_name: String):
+	if animation_player.current_animation != animation_name:
+		if animation_player.has_animation(animation_name):
+			var animation = animation_player.get_animation(animation_name)
+			
+			if animation_name == "Agree_Gesture":
+				animation.loop_mode = Animation.LOOP_NONE
+			else:
+				animation.loop_mode = Animation.LOOP_LINEAR
+
+			animation_player.play(animation_name)
+			print("Reproduzindo animação: ", animation_name)
+		else:
+			print("Animação '" + animation_name + "' não encontrada no AnimationPlayer!")
+
+func next_animation():
+	current_animation_index += 1
+	if current_animation_index >= animations_list.size():
+		current_animation_index = 0
+	
+	play_current_animation()
