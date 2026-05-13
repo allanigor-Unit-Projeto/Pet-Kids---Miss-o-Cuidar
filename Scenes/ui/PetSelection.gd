@@ -3,7 +3,7 @@
 ## Integra com AdotaPetAPI e permite apadrinhamento virtual (RF004).
 extends Control
 
-# ──────────────────────────────────────────────
+
 @onready var grid_pets: GridContainer       = $ScrollContainer/GridPets
 @onready var filter_species: OptionButton   = $Filters/FilterSpecies
 @onready var btn_filter_apply: Button       = $Filters/BtnApply
@@ -26,7 +26,7 @@ const PetCard := preload("res://scenes/ui/components/PetCard.tscn")
 var _all_pets: Array = []
 var _selected_pet: Dictionary = {}
 
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	UIManager.register_toast_container(toast_container)
 	UIManager.register_dialog_overlay(confirm_dialog)
@@ -51,9 +51,9 @@ func _connect_signals() -> void:
 	UIManager.dialog_confirmed.connect(_on_confirm_sponsorship)
 	GameManager.back_button_pressed if GameManager.has_signal("back_button_pressed") else null
 
-# ──────────────────────────────────────────────
+
 # Carregamento de pets
-# ──────────────────────────────────────────────
+
 func _load_pets(species: String = "") -> void:
 	loading_spinner.visible = true
 	lbl_no_results.visible  = false
@@ -81,9 +81,9 @@ func _render_pet_cards(pets: Array) -> void:
 		card.setup(pet)
 		card.selected.connect(_on_pet_card_selected.bind(pet))
 
-# ──────────────────────────────────────────────
+
 # Filtros e busca (RF003)
-# ──────────────────────────────────────────────
+
 func _apply_filters() -> void:
 	var species_idx := filter_species.selected
 	var species_map := {0: "", 1: "dog", 2: "cat", 3: "other"}
@@ -100,9 +100,9 @@ func _on_search_changed(query: String) -> void:
 	)
 	_render_pet_cards(filtered)
 
-# ──────────────────────────────────────────────
+
 # Seleção de pet — exibe painel de detalhes
-# ──────────────────────────────────────────────
+
 func _on_pet_card_selected(pet: Dictionary) -> void:
 	_selected_pet = pet
 	detail_name.text    = pet.get("name", "Sem nome")
@@ -136,9 +136,9 @@ func _animate_panel_in() -> void:
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(panel_pet_detail, "position:y", 0.0, 0.35)
 
-# ──────────────────────────────────────────────
+
 # Apadrinhamento (UC002, RN001)
-# ──────────────────────────────────────────────
+
 func _on_sponsor_pressed() -> void:
 	if not GameManager.active_sponsorship.is_empty():
 		UIManager.show_toast("Encerre o apadrinhamento atual antes de iniciar outro.")
@@ -182,9 +182,9 @@ func _on_api_error(code: int, message: String) -> void:
 	UIManager.show_toast("Erro %d: %s" % [code, message])
 	loading_spinner.visible = false
 
-# ──────────────────────────────────────────────
+
 # Helpers de label
-# ──────────────────────────────────────────────
+
 func _species_label(species: String) -> String:
 	match species:
 		"dog": return "🐶 Cão"
