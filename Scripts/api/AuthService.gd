@@ -3,35 +3,35 @@
 ## JWT com expiração 24h/30d (RNF-S004). Conformidade LGPD para menores (RNF-S003).
 extends Node
 
-# ──────────────────────────────────────────────
+
 const AUTH_URL := "https://api.petkids.app/api/v1/auth"
 const TOKEN_EXPIRY_HOURS := 24
 const REFRESH_EXPIRY_DAYS := 30
 const MIN_AGE_GUARDIAN_REQUIRED := 13   # RN006
 
-# ──────────────────────────────────────────────
+
 signal login_success(user: Dictionary)
 signal login_failed(reason: String)
 signal logout_completed
 signal registration_success(user: Dictionary)
 signal registration_failed(reason: String)
 
-# ──────────────────────────────────────────────
+
 var _access_token: String = ""
 var _refresh_token: String = ""
 var _token_expiry: int = 0
 var _http: HTTPRequest = null
 
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	_http = HTTPRequest.new()
 	_http.timeout = 15.0
 	add_child(_http)
 	_restore_session()
 
-# ──────────────────────────────────────────────
+
 # Restaurar sessão salva
-# ──────────────────────────────────────────────
+
 func _restore_session() -> void:
 	_access_token  = SaveSystem.load_value("access_token", "")
 	_refresh_token = SaveSystem.load_value("refresh_token", "")
@@ -53,9 +53,9 @@ func _restore_user_from_save() -> void:
 	SaveSystem.load_player_progress()
 	GameManager.claim_daily_login_reward()
 
-# ──────────────────────────────────────────────
+
 # Login via email/senha (RF001)
-# ──────────────────────────────────────────────
+
 func login_email(email: String, password: String) -> void:
 	if email.is_empty() or password.is_empty():
 		login_failed.emit("Preencha todos os campos.")
@@ -74,9 +74,9 @@ func login_email(email: String, password: String) -> void:
 	var result: Array = await _http.request_completed
 	_process_auth_response(result)
 
-# ──────────────────────────────────────────────
+
 # Login via OAuth (Google / Apple) (RF001)
-# ──────────────────────────────────────────────
+
 func login_oauth(provider: String, oauth_token: String) -> void:
 	var body := JSON.stringify({"provider": provider, "token": oauth_token})
 	var err := _http.request(
@@ -91,9 +91,9 @@ func login_oauth(provider: String, oauth_token: String) -> void:
 	var result: Array = await _http.request_completed
 	_process_auth_response(result)
 
-# ──────────────────────────────────────────────
+
 # Cadastro (RF002)
-# ──────────────────────────────────────────────
+
 func register(
 		name: String,
 		email: String,
@@ -136,9 +136,9 @@ func _calculate_age(birth_date_str: String) -> int:
 	var current_year := Time.get_date_dict_from_system().get("year", 2026)
 	return current_year - year
 
-# ──────────────────────────────────────────────
+
 # Processamento de respostas
-# ──────────────────────────────────────────────
+
 func _process_auth_response(result: Array) -> void:
 	var code: int = result[1]
 	if code != 200:
@@ -188,9 +188,9 @@ func _extract_user(data: Dictionary) -> Dictionary:
 		"pet_coins": data.get("pet_coins", 0)
 	}
 
-# ──────────────────────────────────────────────
+
 # Tokens JWT (RNF-S004)
-# ──────────────────────────────────────────────
+
 func _save_tokens(data: Dictionary) -> void:
 	_access_token  = data.get("access_token", "")
 	_refresh_token = data.get("refresh_token", "")
@@ -227,9 +227,9 @@ func _refresh_access_token() -> void:
 func get_access_token() -> String:
 	return _access_token
 
-# ──────────────────────────────────────────────
+
 # Logout (RNF-S004 — revogação imediata)
-# ──────────────────────────────────────────────
+
 func logout() -> void:
 	UIManager.show_confirmation_dialog(
 		"logout", "Sair", "Deseja realmente sair da conta?", "Sair", "Cancelar"
@@ -251,9 +251,9 @@ func _force_logout() -> void:
 	logout_completed.emit()
 	GameManager.go_to_login()
 
-# ──────────────────────────────────────────────
-# Helpers
-# ──────────────────────────────────────────────
+
+# Helpers (Ajuda)
+
 func _parse_error(body: PackedByteArray) -> String:
 	var json := JSON.new()
 	if json.parse(body.get_string_from_utf8()) == OK:
