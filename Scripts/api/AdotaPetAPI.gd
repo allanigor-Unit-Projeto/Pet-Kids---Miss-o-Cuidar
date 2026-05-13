@@ -3,31 +3,31 @@
 ## Sincroniza dados de animais a cada 24h e confirma disponibilidade de apadrinhamento.
 extends Node
 
-# ──────────────────────────────────────────────
+
 # Configuração da API
-# ──────────────────────────────────────────────
+
 const BASE_URL := "https://adotapet.recife.pe.gov.br/api/v1"
 const TIMEOUT_SECONDS := 10.0
 const SYNC_INTERVAL_HOURS := 24      # RN008: sincronização mínima 24h
 const MAX_LATENCY_MS := 3000         # RNF-P008: máx 3s em 4G/Wi-Fi
 
-# ──────────────────────────────────────────────
+
 # Sinais
-# ──────────────────────────────────────────────
+
 signal pets_loaded(pets: Array)
 signal pet_sponsored(pet_data: Dictionary)
 signal sponsorship_confirmed(success: bool, message: String)
 signal api_error(code: int, message: String)
 
-# ──────────────────────────────────────────────
+
 # Estado interno
-# ──────────────────────────────────────────────
+
 var _api_key: String = ""
 var _last_sync_timestamp: int = 0
 var _cached_pets: Array = []
 var _http_request: HTTPRequest = null
 
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	_http_request = HTTPRequest.new()
 	_http_request.timeout = TIMEOUT_SECONDS
@@ -38,9 +38,9 @@ func _load_api_key() -> String:
 	# Em produção, carregar de variável de ambiente ou cofre seguro
 	return OS.get_environment("ADOTA_PET_API_KEY")
 
-# ──────────────────────────────────────────────
+
 # Listagem de animais disponíveis
-# ──────────────────────────────────────────────
+
 func fetch_available_pets(
 		species: String = "",
 		page: int = 1,
@@ -123,9 +123,9 @@ func _normalize_pet(raw: Dictionary) -> Dictionary:
 		"castrated": bool(raw.get("castrado", false))
 	}
 
-# ──────────────────────────────────────────────
+
 # Detalhes de um pet específico
-# ──────────────────────────────────────────────
+
 func fetch_pet_details(pet_id: String) -> void:
 	if GameManager.is_offline:
 		var cached := _cached_pets.filter(func(p): return p.get("id") == pet_id)
@@ -147,9 +147,9 @@ func fetch_pet_details(pet_id: String) -> void:
 	else:
 		api_error.emit(result[1], "Pet não encontrado")
 
-# ──────────────────────────────────────────────
+
 # Confirmar disponibilidade para apadrinhamento (UC002)
-# ──────────────────────────────────────────────
+
 func confirm_sponsorship_availability(pet_id: String, user_id: String) -> void:
 	if GameManager.is_offline:
 		# Adia operação para quando houver conexão (RNF-P009)
@@ -184,9 +184,9 @@ func confirm_sponsorship_availability(pet_id: String, user_id: String) -> void:
 	else:
 		api_error.emit(result[1], "Erro ao confirmar apadrinhamento")
 
-# ──────────────────────────────────────────────
+
 # Encerrar apadrinhamento no servidor
-# ──────────────────────────────────────────────
+
 func end_sponsorship_remote(pet_id: String, user_id: String, reason: String) -> void:
 	if GameManager.is_offline:
 		DatabaseManager.queue_offline_event("end_sponsorship", {
@@ -200,17 +200,17 @@ func end_sponsorship_remote(pet_id: String, user_id: String, reason: String) -> 
 	headers.append("Content-Type: application/json")
 	_http_request.request(url, headers, HTTPClient.METHOD_POST, body)
 
-# ──────────────────────────────────────────────
+
 # Fallback offline
-# ──────────────────────────────────────────────
+
 func _handle_offline_fallback(operation: String, payload: Dictionary) -> void:
 	GameManager.is_offline = true
 	DatabaseManager.queue_offline_event(operation, payload)
 	push_warning("[AdotaPetAPI] Offline. Operação '%s' enfileirada." % operation)
 
-# ──────────────────────────────────────────────
+
 # Headers padrão (Bearer Token — RNF-S001)
-# ──────────────────────────────────────────────
+
 func _build_headers() -> PackedStringArray:
 	return PackedStringArray([
 		"Authorization: Bearer %s" % _api_key,
@@ -219,9 +219,9 @@ func _build_headers() -> PackedStringArray:
 		"X-Platform: %s" % GameManager.platform
 	])
 
-# ──────────────────────────────────────────────
+
 # Getters de cache
-# ──────────────────────────────────────────────
+
 func get_cached_pets() -> Array:
 	return _cached_pets
 
