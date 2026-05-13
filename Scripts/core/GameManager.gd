@@ -3,19 +3,18 @@
 ## Controla fluxo de cenas, estado do jogador e eventos globais.
 extends Node
 
-# ──────────────────────────────────────────────
+
 # Sinais globais
-# ──────────────────────────────────────────────
+
 signal scene_changed(scene_name: String)
 signal player_xp_changed(new_xp: int, new_level: int)
 signal pet_needs_updated(pet_id: String, needs: Dictionary)
 signal emergency_event_triggered(event_data: Dictionary)
 signal sponsorship_ended(reason: String)
 
-# ──────────────────────────────────────────────
+
 # Constantes
-# ──────────────────────────────────────────────
-const VERSION := "1.0.0"
+
 const XP_BASE := 100
 const XP_MULTIPLIER := 2.0          # dobra a cada 5 níveis (RN009)
 const HEALTH_CRITICAL_THRESHOLD := 10  # < 10% gera emergência (RN004)
@@ -23,9 +22,9 @@ const EMERGENCY_HOURS_LIMIT := 24   # horas em estado crítico (RN004)
 const NEED_DECAY_INTERVAL := 60.0   # segundos entre decaimento de necessidades
 const PET_COINS_DAILY_LOGIN := 10   # PetCoins por login diário (RN005)
 
-# ──────────────────────────────────────────────
+
 # Estado global do jogo
-# ──────────────────────────────────────────────
+
 var current_user: Dictionary = {}
 var current_pet_virtual: Dictionary = {}
 var active_sponsorship: Dictionary = {}
@@ -41,9 +40,9 @@ var _need_decay_timer: float = 0.0
 var _emergency_start_time: int = 0
 var _in_critical_state: bool = false
 
-# ──────────────────────────────────────────────
+
 # Ciclo de vida
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	_detect_platform()
 	_check_vr_support()
@@ -55,9 +54,9 @@ func _process(delta: float) -> void:
 	_update_pet_needs(delta)
 	_check_emergency_state()
 
-# ──────────────────────────────────────────────
+
 # Detecção de plataforma (RNF-PT003)
-# ──────────────────────────────────────────────
+
 func _detect_platform() -> void:
 	if OS.has_feature("mobile"):
 		platform = "mobile"
@@ -74,9 +73,9 @@ func _check_vr_support() -> void:
 		platform = "vr"
 		print("[GameManager] Modo VR ativado via OpenXR")
 
-# ──────────────────────────────────────────────
+
 # Gerenciamento de cenas
-# ──────────────────────────────────────────────
+
 func change_scene(scene_path: String, data: Dictionary = {}) -> void:
 	UIManager.show_loading()
 	# Passa dados opcionais para a próxima cena via metadata
@@ -112,9 +111,9 @@ func go_to_achievements() -> void:
 func go_to_settings() -> void:
 	change_scene("res://scenes/ui/Settings.tscn")
 
-# ──────────────────────────────────────────────
+
 # Sistema de XP e Nível (RN009)
-# ──────────────────────────────────────────────
+
 func add_xp(amount: int) -> void:
 	player_xp += amount
 	var xp_needed := _xp_for_next_level()
@@ -134,9 +133,9 @@ func _xp_for_next_level() -> int:
 func get_xp_progress_percent() -> float:
 	return float(player_xp) / float(_xp_for_next_level())
 
-# ──────────────────────────────────────────────
+
 # PetCoins — apenas por conquistas/missões (RN005)
-# ──────────────────────────────────────────────
+
 func add_pet_coins(amount: int) -> void:
 	pet_coins += amount
 	SaveSystem.save_player_progress()
@@ -158,9 +157,9 @@ func claim_daily_login_reward() -> void:
 		SaveSystem.save_value("last_daily_claim", today)
 		UIManager.show_toast("Login diário: +%d PetCoins!" % PET_COINS_DAILY_LOGIN)
 
-# ──────────────────────────────────────────────
+
 # Atualização de necessidades do pet em tempo real (RN003)
-# ──────────────────────────────────────────────
+
 func _update_pet_needs(delta: float) -> void:
 	_need_decay_timer += delta
 	if _need_decay_timer < NEED_DECAY_INTERVAL:
@@ -191,9 +190,9 @@ func _get_decay_rate() -> float:
 	# Taxa base: 1 ponto por minuto (ajustável por espécie)
 	return current_pet_virtual.get("decay_rate", 1.0)
 
-# ──────────────────────────────────────────────
+
 # Verificação de emergência (RN004)
-# ──────────────────────────────────────────────
+
 func _check_emergency_state() -> void:
 	var needs: Dictionary = current_pet_virtual.get("needs", {})
 	var health: float = _calculate_health(needs)
@@ -228,9 +227,9 @@ func _trigger_emergency_event() -> void:
 	emergency_event_triggered.emit(event)
 	_emergency_start_time = Time.get_unix_time_from_system()  # reset timer
 
-# ──────────────────────────────────────────────
+
 # Apadrinhamento (RN001, RN002)
-# ──────────────────────────────────────────────
+
 func start_sponsorship(pet_data: Dictionary) -> bool:
 	if not active_sponsorship.is_empty():
 		UIManager.show_toast("Você já possui um apadrinhamento ativo.")
@@ -271,9 +270,9 @@ func _species_decay_rate(species: String) -> float:
 		"rabbit": return 1.5
 		_: return 1.0
 
-# ──────────────────────────────────────────────
+
 # Helpers públicos
-# ──────────────────────────────────────────────
+
 func is_authenticated() -> bool:
 	return not current_user.is_empty()
 
