@@ -31,9 +31,9 @@ func _process(delta: float) -> void:
 func _on_node_added(_node: Node) -> void:
 	pass  # Placeholder para detecção de reconexão
 
-# ──────────────────────────────────────────────
+
 # Sincronização principal
-# ──────────────────────────────────────────────
+
 func sync_pending_events() -> void:
 	var events := DatabaseManager.get_pending_offline_events()
 	if events.is_empty():
@@ -65,9 +65,9 @@ func sync_pending_events() -> void:
 	else:
 		sync_failed.emit("Falha na sincronização: HTTP %d" % result[1])
 
-# ──────────────────────────────────────────────
+
 # Sincronização de progresso do jogador (RNF-PT004)
-# ──────────────────────────────────────────────
+
 func sync_player_progress() -> void:
 	if GameManager.is_offline or not AuthService.is_logged_in():
 		return
