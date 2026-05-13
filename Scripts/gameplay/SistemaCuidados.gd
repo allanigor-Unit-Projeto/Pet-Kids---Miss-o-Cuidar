@@ -4,17 +4,17 @@
 class_name SistemaCuidados
 extends Node
 
-# ──────────────────────────────────────────────
+
 # Sinais
-# ──────────────────────────────────────────────
+
 signal care_applied(care_type: String, effect: float, needs: Dictionary)
 signal item_consumed(item_id: String)
 signal feedback_requested(care_type: String)  # dispara visual + som + tátil
 signal educational_tip_ready(tip: String)
 
-# ──────────────────────────────────────────────
+
 # Enumeração de tipos de cuidado
-# ──────────────────────────────────────────────
+
 enum CareType {
 	FEED,        # alimentar
 	HYDRATE,     # hidratar
@@ -69,9 +69,9 @@ const EDUCATIONAL_TIPS := {
 	CareType.GROOM:   "Escovação frequente previne nós e distribui os óleos naturais da pelagem."
 }
 
-# ──────────────────────────────────────────────
+
 # Aplicar cuidado (chamado por touch mobile ou motion VR)
-# ──────────────────────────────────────────────
+
 func apply_care(care_type: int) -> bool:
 	var required_item: String = REQUIRED_ITEMS.get(care_type, "")
 
@@ -132,9 +132,9 @@ func apply_care(care_type: int) -> bool:
 
 	return true
 
-# ──────────────────────────────────────────────
+
 # Verificação de inventário
-# ──────────────────────────────────────────────
+
 func _has_item(item_id: String) -> bool:
 	var inventory := DatabaseManager.get_inventory()
 	for item in inventory:
@@ -142,9 +142,9 @@ func _has_item(item_id: String) -> bool:
 			return true
 	return false
 
-# ──────────────────────────────────────────────
+
 # Cálculo de bem-estar (RF009)
-# ──────────────────────────────────────────────
+
 func calculate_wellbeing() -> float:
 	var needs := GameManager.get_pet_needs()
 	if needs.is_empty():
@@ -163,9 +163,9 @@ func get_wellbeing_label() -> String:
 	elif score >= 20.0: return "Ruim 😟"
 	else: return "Crítico 😰"
 
-# ──────────────────────────────────────────────
+
 # Evento de emergência manual (veterinário) (RF007)
-# ──────────────────────────────────────────────
+
 func handle_emergency(emergency_data: Dictionary) -> void:
 	# Aplica penalidade educativa no bem-estar
 	var needs := GameManager.get_pet_needs().duplicate()
@@ -177,9 +177,9 @@ func handle_emergency(emergency_data: Dictionary) -> void:
 	AudioManager.play_sfx("emergency_alert")
 	UIManager._haptic_feedback(0.5)
 
-# ──────────────────────────────────────────────
+
 # Progresso de missões
-# ──────────────────────────────────────────────
+
 func _update_mission_progress(care_type: int) -> void:
 	var missions := DatabaseManager.get_active_missions()
 	for mission in missions:
