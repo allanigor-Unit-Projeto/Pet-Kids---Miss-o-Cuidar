@@ -24,7 +24,7 @@ extends Control
 
 var _settings: Dictionary = {}
 
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	UIManager.register_dialog_overlay(dialog_overlay)
 	UIManager.register_toast_container(toast_container)
@@ -90,9 +90,9 @@ func _connect_signals() -> void:
 func _show_vr_section_if_needed() -> void:
 	vr_section.visible = GameManager.is_vr_mode
 
-# ──────────────────────────────────────────────
+
 # Salvar configurações
-# ──────────────────────────────────────────────
+
 func _on_save_pressed() -> void:
 	var q_keys := {0: "low", 1: "medium", 2: "high"}
 	var lang_keys := {0: "pt_BR", 1: "en_US"}
@@ -150,9 +150,9 @@ func _apply_colorblind_mode(mode: String) -> void:
 		_:
 			print("[Settings] Sem filtro de daltonismo")
 
-# ──────────────────────────────────────────────
+
 # Excluir dados (RNF-U009 — ação destrutiva)
-# ──────────────────────────────────────────────
+
 func _on_delete_data_pressed() -> void:
 	UIManager.show_confirmation_dialog(
 		"delete_all_data",
