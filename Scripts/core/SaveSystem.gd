@@ -8,7 +8,7 @@ const SAVE_VERSION := 1
 
 var _config := ConfigFile.new()
 
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	_load_file()
 
@@ -17,9 +17,9 @@ func _load_file() -> void:
 	if err != OK:
 		print("[SaveSystem] Nenhum save encontrado. Criando novo.")
 
-# ──────────────────────────────────────────────
+
 # Progresso do jogador
-# ──────────────────────────────────────────────
+
 func save_player_progress() -> void:
 	_config.set_value("player", "level", GameManager.player_level)
 	_config.set_value("player", "xp", GameManager.player_xp)
@@ -49,9 +49,9 @@ func _migrate_save(from_version: int) -> void:
 	print("[SaveSystem] Migrando save v%d → v%d" % [from_version, SAVE_VERSION])
 	# Adicionar migrações futuras aqui
 
-# ──────────────────────────────────────────────
+
 # Pet virtual / Apadrinhamento
-# ──────────────────────────────────────────────
+
 func save_sponsorship(sponsorship: Dictionary) -> void:
 	for key in sponsorship:
 		_config.set_value("sponsorship", key, sponsorship[key])
@@ -76,9 +76,9 @@ func save_pet_virtual(pet: Dictionary) -> void:
 func load_pet_virtual() -> Dictionary:
 	return DatabaseManager.get_active_pet_virtual()
 
-# ──────────────────────────────────────────────
+
 # Configurações
-# ──────────────────────────────────────────────
+
 func save_settings(settings: Dictionary) -> void:
 	for key in settings:
 		_config.set_value("settings", key, settings[key])
@@ -101,9 +101,9 @@ func _default_settings() -> Dictionary:
 		"vr_locomotion": "teleport", "vr_comfort": true
 	}
 
-# ──────────────────────────────────────────────
+
 # Chave-valor genérico
-# ──────────────────────────────────────────────
+
 func save_value(key: String, value) -> void:
 	_config.set_value("misc", key, value)
 	_config.save(SAVE_FILE)
@@ -111,9 +111,9 @@ func save_value(key: String, value) -> void:
 func load_value(key: String, default_value = null):
 	return _config.get_value("misc", key, default_value)
 
-# ──────────────────────────────────────────────
+
 # Deleção de dados (RNF-U009 — ação destrutiva)
-# ──────────────────────────────────────────────
+
 func delete_all_data() -> void:
 	DirAccess.remove_absolute(SAVE_FILE)
 	DatabaseManager.clear_pet_virtual()
