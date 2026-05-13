@@ -3,14 +3,14 @@
 class_name SistemaProgressao
 extends Node
 
-# ──────────────────────────────────────────────
+
 signal mission_unlocked(mission: Dictionary)
 signal achievement_unlocked(achievement: Dictionary)
 signal daily_missions_refreshed(missions: Array)
 
-# ──────────────────────────────────────────────
+
 # Dados estáticos de missões diárias (RF011)
-# ──────────────────────────────────────────────
+
 const DAILY_MISSION_POOL := [
 	{"id": "dm_feed_3",    "titulo": "Alimentação Responsável",
 	 "descricao": "Alimente seu pet 3 vezes hoje.",
@@ -56,15 +56,15 @@ const ACHIEVEMENTS := [
 	 "badge_art": "badge_encyclopedia", "xp_recompensa": 120}
 ]
 
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	GameManager.player_xp_changed.connect(_check_level_achievements)
 	GameManager.emergency_event_triggered.connect(_on_emergency)
 	_refresh_daily_missions()
 
-# ──────────────────────────────────────────────
+
 # Missões diárias (RF011)
-# ──────────────────────────────────────────────
+
 func _refresh_daily_missions() -> void:
 	var today := Time.get_date_string_from_system()
 	var last_refresh: String = SaveSystem.load_value("last_mission_refresh", "")
@@ -94,9 +94,9 @@ func get_completed_missions_today() -> Array:
 		func(m): return m.get("status") == "concluida"
 	)
 
-# ──────────────────────────────────────────────
+
 # Conquistas (RF012)
-# ──────────────────────────────────────────────
+
 func check_achievement(achievement_id: String) -> void:
 	var unlocked := DatabaseManager.get_unlocked_achievements()
 	for a in unlocked:
