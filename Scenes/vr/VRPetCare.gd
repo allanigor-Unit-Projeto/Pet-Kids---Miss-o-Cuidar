@@ -3,7 +3,7 @@
 ## Equivalente ao PetCare.gd mas com motion controllers e UI espacial 3D.
 extends Node3D
 
-# ──────────────────────────────────────────────
+
 @onready var xr_origin: XROrigin3D            = $XROrigin3D
 @onready var xr_camera: XRCamera3D            = $XROrigin3D/XRCamera3D
 @onready var xr_left_hand: XRController3D     = $XROrigin3D/LeftHand
@@ -26,7 +26,7 @@ extends Node3D
 # Vignette (anti-enjoo RF-V008)
 @onready var vignette_overlay: MeshInstance3D = $XROrigin3D/XRCamera3D/VignetteOverlay
 
-# ──────────────────────────────────────────────
+
 var _sistema_cuidados: SistemaCuidados
 var _sistema_progressao: SistemaProgressao
 var _sistema_eventos: SistemaEventos
@@ -46,7 +46,7 @@ const HUD_DISTANCE := 1.2           # metros à frente da câmera (RNF-U006)
 const HAPTIC_INTENSITY := 0.5
 const HAPTIC_DURATION := 0.1
 
-# ──────────────────────────────────────────────
+
 func _ready() -> void:
 	_initialize_xr()
 	_create_subsystems()
@@ -55,9 +55,9 @@ func _ready() -> void:
 	_apply_vr_settings()
 	AudioManager.play_music("vr_ambient")
 
-# ──────────────────────────────────────────────
+
 # Inicialização OpenXR (RNF-I011)
-# ──────────────────────────────────────────────
+
 func _initialize_xr() -> void:
 	var xr_interface := XRServer.find_interface("OpenXR")
 	if xr_interface == null:
@@ -101,9 +101,9 @@ func _connect_signals() -> void:
 	_sistema_cuidados.educational_tip_ready.connect(_show_spatial_tip)
 	_sistema_cuidados.care_applied.connect(_on_care_applied_vr)
 
-# ──────────────────────────────────────────────
+
 # HUD espacial 3D (RF-V009) — máx 10% do FOV (RNF-D006)
-# ──────────────────────────────────────────────
+
 func _setup_spatial_hud() -> void:
 	if hud_spatial == null:
 		return
@@ -119,9 +119,8 @@ func _update_spatial_hud() -> void:
 	hud_spatial.global_position = hud_spatial.global_position.lerp(target_pos, 0.05)
 	hud_spatial.look_at(xr_camera.global_position)
 
-# ──────────────────────────────────────────────
 # Motion Controllers — botões (RF-V001)
-# ──────────────────────────────────────────────
+
 func _on_right_button_pressed(button_name: String) -> void:
 	match button_name:
 		"trigger_click":
@@ -155,9 +154,9 @@ func _on_left_button_released(button_name: String) -> void:
 	if button_name == "grip_click":
 		_left_grip_pressed = false
 
-# ──────────────────────────────────────────────
+
 # Interação por proximidade (RF-V005)
-# ──────────────────────────────────────────────
+
 func _on_hand_entered_pet_zone(body: Node3D) -> void:
 	if body == xr_right_hand or body == xr_left_hand:
 		_haptic_both_hands(0.3, 0.15)
@@ -176,9 +175,9 @@ func _try_interact_with_pet() -> void:
 		_apply_care_vr(SistemaCuidados.CareType.GROOM)
 		UIManager.show_toast("Você acariciou %s! 💕" % GameManager.current_pet_virtual.get("name", ""))
 
-# ──────────────────────────────────────────────
-# Aplicar cuidado em VR
-# ──────────────────────────────────────────────
+
+# Aplica cuidado em VR
+
 func _apply_care_vr(care_type: int) -> void:
 	var success := _sistema_cuidados.apply_care(care_type)
 	if success:
@@ -204,9 +203,9 @@ func _care_animation(care_type: int) -> String:
 func _on_care_applied_vr(_type: String, _effect: float, _needs: Dictionary) -> void:
 	SaveSystem.save_pet_virtual(GameManager.current_pet_virtual)
 
-# ──────────────────────────────────────────────
+
 # Locomoção VR (RF-V007) — teleporte + livre
-# ──────────────────────────────────────────────
+
 func _teleport_to_gaze_target() -> void:
 	if _locomotion_mode != "teleport":
 		return
@@ -242,9 +241,9 @@ func _process_free_locomotion(delta: float) -> void:
 	else:
 		_activate_vignette(false)
 
-# ──────────────────────────────────────────────
-# Vignette anti-enjoo (RF-V008)
-# ──────────────────────────────────────────────
+
+# Anti-enjoo (RF-V008)
+
 func _activate_vignette(active: bool) -> void:
 	if vignette_overlay == null:
 		return
@@ -254,15 +253,15 @@ func _activate_vignette(active: bool) -> void:
 	vignette_overlay.visible = active
 	_vignette_active = active
 
-# ──────────────────────────────────────────────
+
 # Áudio espacial 3D (RF-V006)
-# ──────────────────────────────────────────────
+
 func _play_spatial_sfx(sfx_name: String, position: Vector3) -> void:
 	AudioManager.create_spatial_audio(sfx_name, position)
 
-# ──────────────────────────────────────────────
+
 # UI Dica espacial
-# ──────────────────────────────────────────────
+
 func _show_spatial_tip(tip: String) -> void:
 	# Posiciona label 3D à frente do jogador em VR
 	var tip_node := hud_spatial.find_child("TipLabel3D", true, false) as Label3D
@@ -272,9 +271,9 @@ func _show_spatial_tip(tip: String) -> void:
 		await get_tree().create_timer(5.0).timeout
 		tip_node.visible = false
 
-# ──────────────────────────────────────────────
+
 # Roda de ações VR
-# ──────────────────────────────────────────────
+
 func _show_action_wheel() -> void:
 	if action_wheel_3d:
 		action_wheel_3d.visible = true
@@ -283,24 +282,24 @@ func _hide_action_wheel() -> void:
 	if action_wheel_3d:
 		action_wheel_3d.visible = false
 
-# ──────────────────────────────────────────────
+
 # Emergência em VR
-# ──────────────────────────────────────────────
+
 func _on_emergency_triggered(event: Dictionary) -> void:
 	_haptic_both_hands(1.0, 0.5)
 	_play_spatial_sfx("emergency_alert", pet_node.global_position)
 	_show_spatial_tip(event.get("descricao", "Emergência!"))
 
-# ──────────────────────────────────────────────
+
 # HUD necessidades (atualização via sinal)
-# ──────────────────────────────────────────────
+
 func _on_needs_updated(_pet_id: String, _needs: Dictionary) -> void:
 	# Atualiza painéis 3D do HUD espacial
 	pass  # Implementado via Material shaders no needs_panel_3d
 
-# ──────────────────────────────────────────────
+
 # Haptic feedback (RF-V010)
-# ──────────────────────────────────────────────
+
 func _haptic_right_hand(intensity: float, duration: float) -> void:
 	xr_right_hand.trigger_haptic_pulse("haptic", 0.0, intensity, duration, 0.0)
 
@@ -311,7 +310,7 @@ func _haptic_both_hands(intensity: float, duration: float) -> void:
 	_haptic_right_hand(intensity, duration)
 	_haptic_left_hand(intensity, duration)
 
-# ──────────────────────────────────────────────
+
 func _process(delta: float) -> void:
 	_update_spatial_hud()
 	_process_free_locomotion(delta)
