@@ -8,3 +8,5 @@ arquivo de exportação da /Main "export_presets.cfg"
 name="web"
 [preset.1]
 name="Android" 
+
+Link do Projeto no Google Drive (Dev + Apk): https://drive.google.com/drive/folders/1vf_uS0nLr8NezmddoGirKx1N5MiGHYwh?usp=sharing
