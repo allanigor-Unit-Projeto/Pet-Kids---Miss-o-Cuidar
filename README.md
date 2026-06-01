@@ -1,5 +1,16 @@
 # Pet-Kids-Missão-Cuidar
-Este Repositório é voltado para o desenvolvimento do Game Pet Kids para o trabalho da faculdade.
+Este Repositório é voltado para o desenvolvimento do Game Pet Kids.
+
+1. O Game é desenvolvido na Plataforma GODOT Engine versão 4.4.1
+2. O cenário principal foi totalmente aportuguesado, mas sua origem é no LitleTokio.glb criado por @glenatron que você pode conferir neste link: https://sketchfab.com/3d-models/littlest-tokyo-94b24a60dc1b48248de50bf087c0f042
+3. Tanto o Personagem, quanto o Pet (Cachorro) foram modelados na Plataforma Blender sobre os arquivos garoto.glb e cao.glb.
+4. O Cenário da Casa do Personagem foi baseada num panorama de um kitnet Tour Virtual 360° e gameficado pela inteligencia artificial Nanobanana.
+5. O Cenário da Sala de Aula é baseado num panorama sala de inglês de uma escola cujo nome não é sabido, resolvemos manter a imagem original por coveniencia pedagógica de elementos do mundo real.
+6. O Apk utiliza o SQlite como banco de dados.
+7. O app WEB utiliza o PostgreSQL como banco de daod em Nuvem.
+8. Ambos APK e WEB compartilham das estruturas do postgres da Nuvem AWS.
+
+
 
 <img width="1920" height="908" alt="Extensionista 3" src="https://github.com/user-attachments/assets/eeddab45-4c4f-4e78-9d35-a4b9df83946d" />
 
