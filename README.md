@@ -15,7 +15,7 @@ Este Repositório é voltado para o desenvolvimento do Game Pet Kids.
 <img width="1920" height="908" alt="Extensionista 3" src="https://github.com/user-attachments/assets/eeddab45-4c4f-4e78-9d35-a4b9df83946d" />
 
 
-As versões WEB (.html) e Mobile (.apk) são definidas no bloco  [preset 0 e 1] no 
+9. As versões WEB (.html) e Mobile (.apk) são definidas no bloco  [preset 0 e 1] no 
 arquivo de exportação da /Main "export_presets.cfg"
 
 [preset.0]
@@ -25,7 +25,8 @@ name="Android"
 
 <img width="1918" height="836" alt="Extensionista 3 (1)" src="https://github.com/user-attachments/assets/65ef6d61-2e2b-4a99-b07e-3335ce6bde04" />
 
-
+10. O Game compartilha de funcionalidades modernas: na divisão da tela metade à esquerda, o controle de direção é deslocado para quaisquer posições dando maior flexbilidade para jogadores de todas as idades.
+    Na divisão da tela metade à Direita, o controle de Cãmera é deslocado para quaisquer posições permitindos giros em todos os sentidos e direções dentro do cenário.
 
 <img width="1640" height="720" alt="Screenshot_2026-05-18-18-49-05-710_com example petkids" src="https://github.com/user-attachments/assets/5fff0199-c2a5-428d-9baa-6daf50f7ca00" />
 
