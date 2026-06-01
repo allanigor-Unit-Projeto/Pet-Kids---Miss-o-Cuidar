@@ -5,10 +5,10 @@ Este Repositório é voltado para o desenvolvimento do Game Pet Kids.
 2. O cenário principal foi totalmente aportuguesado, mas sua origem é no LitleTokio.glb criado por @glenatron que você pode conferir neste link: https://sketchfab.com/3d-models/littlest-tokyo-94b24a60dc1b48248de50bf087c0f042
 3. Tanto o Personagem, quanto o Pet (Cachorro) foram modelados na Plataforma Blender sobre os arquivos garoto.glb e cao.glb.
 4. O Cenário da Casa do Personagem foi baseada num panorama de um kitnet Tour Virtual 360° e gameficado pela inteligencia artificial Nanobanana.
-5. O Cenário da Sala de Aula é baseado num panorama sala de inglês de uma escola cujo nome não é sabido, resolvemos manter a imagem original por coveniencia pedagógica de elementos do mundo real.
+5. O Cenário da Sala de Aula é baseado num panorama sala de inglês de uma escola cujo nome não é sabido, resolvemos manter a imagem original por coveniência pedagógica dos elementos do mundo real.
 6. O Apk utiliza o SQlite como banco de dados.
-7. O app WEB utiliza o PostgreSQL como banco de daod em Nuvem.
-8. Ambos APK e WEB compartilham das estruturas do postgres da Nuvem AWS.
+7. O app WEB utiliza o PostgreSQL como banco de dados em Nuvem.
+8. Ambos APK e WEB compartilham das estruturas do PostgreSQL da Nuvem AWS.
 
 
 
